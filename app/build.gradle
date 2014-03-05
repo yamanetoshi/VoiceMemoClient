@@ -10,10 +10,38 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    def homeDirectory = System.getenv()['HOME']
+
+    signingConfigs {
+        debug {
+            storeFile file(homeDirectory + "/.android/debug.keystore")
+        }
+
+        myConfig
+    }
+
+    if (project.hasProperty('storeFile')) {
+        android.signingConfigs.myConfig.storeFile = file(homeDirectory + storeFile)
+    }
+    if (project.hasProperty('storePassword')) {
+        android.signingConfigs.myConfig.storePassword = storePassword
+    }
+    if (project.hasProperty('keyAlias')) {
+        android.signingConfigs.myConfig.keyAlias = keyAlias
+    }
+    if (project.hasProperty('keyPassword')) {
+        android.signingConfigs.myConfig.keyPassword = keyPassword
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.myConfig
         }
     }
 }
